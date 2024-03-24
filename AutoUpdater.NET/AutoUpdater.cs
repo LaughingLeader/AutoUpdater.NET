@@ -512,22 +512,6 @@ public static class AutoUpdater
                         DownloadUpdate(args);
                         Exit();
                     }
-                    else
-                    {
-                        if (Thread.CurrentThread.GetApartmentState().Equals(ApartmentState.STA))
-                        {
-                            ShowUpdateForm(args);
-                        }
-                        else
-                        {
-                            var thread = new Thread(new ThreadStart(delegate { ShowUpdateForm(args); }));
-                            thread.CurrentCulture =
-                                thread.CurrentUICulture = CultureInfo.CurrentCulture;
-                            thread.SetApartmentState(ApartmentState.STA);
-                            thread.Start();
-                            thread.Join();
-                        }
-                    }
 
                     return true;
                 }
@@ -704,24 +688,6 @@ public static class AutoUpdater
         }
 
         return false;
-    }
-
-    /// <summary>
-    ///     Shows standard update dialog.
-    /// </summary>
-    public static void ShowUpdateForm(UpdateInfoEventArgs args)
-    {
-        using var updateForm = new UpdateForm(args);
-
-        if (UpdateFormSize.HasValue)
-        {
-            updateForm.Size = UpdateFormSize.Value;
-        }
-
-        if (updateForm.ShowDialog(_owner).Equals(DialogResult.OK))
-        {
-            Exit();
-        }
     }
 
     internal static MyWebClient GetWebClient(Uri uri, IAuthentication basicAuthentication)
